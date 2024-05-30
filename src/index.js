@@ -61,10 +61,10 @@ const images = {
 
 };
 
-console.log(Object.keys(images));
-
 function displaySlides() {
     let counter = 0;
+
+    let timeoutID;
 
     function navigationButtons() {
         const buttonsContainer = document.createElement('div');
@@ -72,10 +72,11 @@ function displaySlides() {
         const nextBtn = document.createElement('button');
         const dotsContainer = document.createElement('div');
 
-        function navDots(dot, img) {
+        function navDots(img) {
+            clearTimeout(timeoutID);
             counter = Object.keys(images).indexOf(img);
-            
             updateSlides();
+            timeoutID = setTimeout(autoSlide, 5000);
         }
 
         for (const img in images) {
@@ -83,7 +84,7 @@ function displaySlides() {
             navDot.setAttribute('class', `navDot`);
             dotsContainer.appendChild(navDot);
             navDot.addEventListener('click', function() {
-                navDots(navDot, img);
+                navDots(img);
             })
         }
 
@@ -92,17 +93,21 @@ function displaySlides() {
 
         function next() {
             counter += 1;
+            clearTimeout(timeoutID);
             updateSlides()
+            timeoutID = setTimeout(autoSlide, 5000);
         }
 
         function autoSlide() {
+            timeoutID = setTimeout(autoSlide, 5000);
             next();
-            setTimeout(autoSlide, 5000);
         }
 
         function previous() {
             counter -= 1;
+            clearTimeout(timeoutID);
             updateSlides()
+            timeoutID = setTimeout(autoSlide, 5000);
         }
 
 
@@ -128,18 +133,23 @@ function displaySlides() {
 
         currentImg.src = `${Object.values(images)[counter].image}`;
 
-        previousImg.style.opacity = "0%";
-        nextImg.style.opacity = "0%";
+        previousImg.style.opacity = "30%";
+        nextImg.style.opacity = "30%";
 
         if (Object.values(images)[counter - 1]) {
             previousImg.src = `${Object.values(images)[counter - 1].image}`;
-            previousImg.style.opacity = "30%";
             
+            
+        } else {
+            previousImg.src = `${Object.values(images)[Object.values(images).length - 1].image}`;
         }
 
         if (Object.values(images)[counter + 1]) {
             nextImg.src = `${Object.values(images)[counter + 1].image}`;
-            nextImg.style.opacity = "30%";
+            
+        } else {
+            nextImg.src = `${Object.values(images)[0].image}`;
+
         }
 
         const dots = document.querySelectorAll('.navDot');
